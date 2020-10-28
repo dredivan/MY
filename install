@@ -1,0 +1,37 @@
+sudo su
+
+apt-get update
+
+apt-get -y upgrade
+
+raspi-config
+8 Update - обновление приложение
+4 Localisation Options / I1 Change Locale - ищем и выбираем пробелом ru_RU.UTF-8 UTF-8
+4 Localisation Options / I2 Change Timezone - выбираем часовой пояс
+
+mkdir -p /etc/NetworkManager/conf.d/
+touch /etc/NetworkManager/conf.d/100-disable-wifi-mac-randomization.conf
+nano /etc/NetworkManager/conf.d/100-disable-wifi-mac-randomization.conf
+
+[connection]
+wifi.mac-address-randomization=1
+[device]
+wifi.scan-rand-mac-address=no
+
+Установка пакетов нужных для работы и установки Hass.io
+
+sudo apt-get install -y bash curl git jq avahi-daemon dbus apparmor-utils network-manager libavahi-compat-libdnssd-dev libatlas3-base apt-transport-https ca-certificates socat software-properties-common ftpd mc
+reboot
+
+sudo su
+curl -fsSL get.docker.com -o get-docker.sh && sh get-docker.sh
+sudo groupadd docker
+sudo gpasswd -a $USER docker
+newgrp docker
+
+docker pull portainer/portainer-ce
+docker run -d -p 9000:9000 --name portainer --restart always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce
+
+curl -sL https://raw.githubusercontent.com/home-assistant/supervised-installer/master/installer.sh | bash -s -- -m raspberrypi3
+curl -Lo installer.sh https://raw.githubusercontent.com/home-assistant/supervised-installer/master/installer.sh
+bash installer.sh -m raspberrypi3 -s
