@@ -1,0 +1,77 @@
+script
+------------------------------------------------------------------------------------------------------------------------------
+name: script_ddns1
+
+:local user "i****"
+:local pass "**"
+:local host "***.ddns.us"
+##############
+##############
+:global lastwanip;
+:if ([ :typeof $lastwanip ] = "nothing" ) do={ :global lastwanip 0.0.0.0 };
+:local wanip [:resolve $host];
+:if ( $wanip != $lastwanip ) do={
+	/tool fetch mode=http address="checkip.dyndns.org" src-path="/" dst-path="/dyndns.checkip.html"
+	:local result [/file get dyndns.checkip.html contents]
+	:local resultLen [:len $result]
+	:local startLoc [:find $result ": " -1]
+	:set startLoc ($startLoc + 2)
+	:local endLoc [:find $result "</body>" -1]
+	:local currentIP [:pick $result $startLoc $endLoc]
+	:set lastwanip $currentIP;
+	:put [/tool dns-update name=$host address=$currentIP key-name=$user key=$pass ]
+}
+------------------------------------------------------------------------------------------------------------------------------
+name: script_ddns2
+
+:local user "i****"
+:local pass "**"
+:local host "ftp.********.ddns.us"
+##############
+##############
+:global lastwanip;
+:if ([ :typeof $lastwanip ] = "nothing" ) do={ :global lastwanip 0.0.0.0 };
+:local wanip [:resolve $host];
+:if ( $wanip != $lastwanip ) do={
+	/tool fetch mode=http address="checkip.dyndns.org" src-path="/" dst-path="/dyndns.checkip.html"
+	:local result [/file get dyndns.checkip.html contents]
+	:local resultLen [:len $result]
+	:local startLoc [:find $result ": " -1]
+	:set startLoc ($startLoc + 2)
+	:local endLoc [:find $result "</body>" -1]
+	:local currentIP [:pick $result $startLoc $endLoc]
+	:set lastwanip $currentIP;
+	:put [/tool dns-update name=$host address=$currentIP key-name=$user key=$pass ]
+}
+------------------------------------------------------------------------------------------------------------------------------
+name: script_ddns3
+
+:local user "i****"
+:local pass "**"
+:local host "www.*****.ddns.us"
+##############
+##############
+:global lastwanip;
+:if ([ :typeof $lastwanip ] = "nothing" ) do={ :global lastwanip 0.0.0.0 };
+:local wanip [:resolve $host];
+:if ( $wanip != $lastwanip ) do={
+	/tool fetch mode=http address="checkip.dyndns.org" src-path="/" dst-path="/dyndns.checkip.html"
+	:local result [/file get dyndns.checkip.html contents]
+	:local resultLen [:len $result]
+	:local startLoc [:find $result ": " -1]
+	:set startLoc ($startLoc + 2)
+	:local endLoc [:find $result "</body>" -1]
+	:local currentIP [:pick $result $startLoc $endLoc]
+	:set lastwanip $currentIP;
+	:put [/tool dns-update name=$host address=$currentIP key-name=$user key=$pass ]
+}
+---------------------------------------------------------------------------------------------------------------
+
+schedule1
+/system script run script_ddns1
+
+schedule2
+/system script run script_ddns2
+
+schedule3
+/system script run script_ddns3
